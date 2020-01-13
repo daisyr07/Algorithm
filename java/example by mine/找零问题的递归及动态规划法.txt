@@ -1,0 +1,106 @@
+/**
+ * author：Doris19967
+ *
+/
+
+import java.util.Arrays;
+import java.util.Scanner;
+
+public class ChangeMaking {
+	public static void main(String[] args) {
+		// TODO Auto-generated method stub
+		//降序输入
+		int[] money ={25,10,5,1};
+		Scanner sc=new Scanner(System.in);
+		System.out.println("请在面值为1元，5元，10元，25元中找零");
+		System.out.print("请输入想要找零的钱：");
+		int n = sc.nextInt();		
+		int c=n;
+		System.out.print(String.format("你想要找零的是 %d元, %d 元 =",c,c));
+		Schange(money,n);
+		System.out.println("递归方法");
+		long startTime1 = System.nanoTime();
+		returnChange(money, n);	
+		long endTime1 = System.nanoTime();	
+	    long t1=endTime1-startTime1;
+	     System.out.println("所花的时间为："+t1+"ns");
+	     System.out.println("动态规划");
+	     long startTime2 = System.nanoTime();
+		int count2 = changeMaking(money, n);		
+		long endTime2 = System.nanoTime();		
+		 long t2=endTime2-startTime2;
+	     System.out.println("所花的时间为："+t2+"ns");
+	     System.out.println("所选最少的用硬币数：" + count2);
+	     
+	}
+
+//动态规划的“找零算法”
+	private static int changeMaking(int[] money, int n) {
+		
+		int[] count = new int[n + 1];
+		count[0] = 0;
+		for (int j = 1; j < n + 1; j++) {
+			int minCoins = j;
+			for (int i = 0; i < money.length; i++) {
+				// 遍历硬币的面值
+				if (j - money[i] >= 0) {
+					int temp = count[j - money[i]] + 1;
+					// 当前所需硬币数
+					if (temp < minCoins) {
+						minCoins = temp;
+					}
+				}
+			}
+
+			count[j] = minCoins;
+		}
+//		System.out.println(Arrays.toString(count));
+		return count[n];
+	}
+	//递归方法
+public static int returnChange(int[] money,int n)
+    {
+        if(n<=0) {
+        return 0;
+        }
+        else{
+        for(int i=money.length-1;i>=0;i--)
+        {
+            if(n>=money[i])
+                return returnChange(money, n-money[i])+1;
+        }
+        return 0;
+    }
+    }
+
+	//找零具体方案
+	public static void Schange(int[] money,int n) {
+		if(n<1) {
+			System.out.println("无输出");
+			return;
+		}
+		else{
+			int[]pi=new int[money.length];		
+		while(n>0) {
+			for(int i=0;i<money.length;i++) {
+				if(n>=money[i]) {
+					n=n-money[i];
+					pi[i]+=1;
+					break;
+				}
+			}
+			
+		}	
+		
+		StringBuilder sb=new StringBuilder();
+		for(int i=0;i<pi.length;i++) {
+			if(pi[i]>0) 
+			sb.append(String.format("%d 元 *%d 个+", money[i],pi[i]));
+		}
+		String msg=sb.toString();
+		msg=msg.substring(0, msg.length()-1);
+	    System.out.println(msg);
+		}
+	}
+}
+

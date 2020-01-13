@@ -1,0 +1,186 @@
+
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.Queue;
+import java.util.Scanner;
+public class Dijkstra {
+//
+//	/**
+//	 * @param args
+//	 */
+//	private int ENum; // 边的数量
+//	private char[] V; // 顶点集合
+//	private int[][] Mx; // 邻接矩阵
+//	private static final int Max = Integer.MAX_VALUE;// 最大值
+//	/*
+//	 * 创建图(自己输入数据)
+//	 */public Dijkstra() {
+//			// 输入"顶点数"和"边数"
+//			System.out.printf("请输入连通图的顶点数: ");
+//			int v = readInt();
+//			System.out.printf("请输入连通图的边数: ");
+//			int e = readInt();
+//			// 初始化"顶点"
+//			V = new char[v];
+//			for (int i = 0; i < V.length; i++) {
+//				System.out.printf("v(%d): ", i);
+//				V[i] = readChar();
+//			}
+//			// 初始化"边"的权值
+//			ENum = e;
+//			Mx = new int[v][v];
+//			for (int i = 0; i < v; i++) {
+//				for (int j = 0; j < v; j++) {
+//					if (i == j)
+//						Mx[i][j] = 0;
+//					else
+//						Mx[i][j] = Max;
+//				}
+//			}
+//			for (int i = 0; i < e; i++) {
+//				// 读取边的起始顶点,结束顶点,权值
+//				System.out.printf("edge(%d):", i);
+//				char c1 = readChar(); // 读取"起始顶点"
+//				char c2 = readChar(); // 读取"结束顶点"
+//				int weight = readInt(); // 读取"权值"
+//				int p1 = getPosition(c1);
+//				int p2 = getPosition(c2);
+//				Mx[p1][p2] = weight;
+//				Mx[p2][p1] = weight;
+//			}
+//		}
+//
+//		/*
+//		 * 读取一个输入整数字符
+//		 */
+//		private int readInt() {
+//			Scanner sc = new Scanner(System.in);
+//			return sc.nextInt();
+//		}
+//
+//		/*
+//		 * 读取一个输入Char字符
+//		 */
+//		private char readChar() {
+//			char ch = '0';
+//			do {
+//				try {
+//					ch = (char) System.in.read();
+//				} catch (IOException e) {
+//					e.printStackTrace();
+//				}
+//			} while (!((ch >= 'a' && ch <= 'z') || (ch >= 'A' && ch <= 'Z')));
+//			return ch;
+//		}
+//
+//		/*
+//		 * 返回位置
+//		 */
+//		private int getPosition(char ch) {
+//			for (int i = 0; i < V.length; i++)
+//				if (V[i] == ch)
+//					return i;
+//			return -1;
+//		}
+//
+//		// 边的结构体
+//		private static class EData {
+//			char start; // 边的起点
+//			char end; // 边的终点
+//			int weight; // 边的权重
+//
+//			public EData(char start, char end, int weight) {
+//				this.start = start;
+//				this.end = end;
+//				this.weight = weight;
+//			}
+			
+			private Queue visited;
+			int[]distance;
+			public void Dijkstra(int len){
+				v=new LinkedList();
+				distance=new int[len];
+			}
+			public int getIndex(Queue q,int[] dis){
+				int k=-1;
+				int min_num=Integer.MAX_VALUE;
+				for(int i=0;i<dis.length;i++){
+					if(!q.contains(i)){
+						if(dis[i]<min_num){
+							min_num=dis[i];
+							k=i;
+						}
+					}
+				}
+				return k;
+			} 
+			public void dijkstra(int[][] weight,Object[] str,int v){
+				HashMap path;
+				path=new HashMap();
+				for(int i=0;i<str.length;i++){
+					//System.out.printf("", str[i]);
+					path.put(i, "");
+				}
+					//初始化路径长度数组distance
+					for(int i=0;i<str.length;i++){
+						path.put(i, path.get(i)+""+str[v]);
+						if(i==v){
+							distance[i]=0;
+							}else if(weight[v][i]!=-1){
+						distance[i]=weight[v][i];
+						path.put(i,path.get(i)+"-->"+str[i]);
+					}else distance[i]=Integer.MAX_VALUE;
+				}
+			visited.add(v);
+			while(visited.size()<str.length){
+				int k=getIndex(visited,distance);
+				visited.add(k);
+				if(k!=1){
+					for(int j=0;j<str.length;j++){
+						if(weight[k][j]!=-1){
+							if(distance[j]>distance[k]+weight[k][j]){
+								distance[j]=distance[k]+weight[k][j];
+								path.put(j,path.get(k)+"-->"+str[j]);
+								
+							}
+						}
+					}
+				}
+				for(int h=0;h<str.length;h++){
+					System.out.print(str[v]+"-->"+str[h]+";"+distance[h]+"");
+					if(distance[h]==Integer.MAX_VALUE){
+						System.out.print(str[v]+"-->"+str[h]+"之间没有可通行的路径");
+					}else{
+						System.out.print(str[v]+"-->"+str[h]+"之间有可通行的路径,具体路径为："+path.get(h).toString());
+						System.out.println();
+					}
+					visited.clear();
+				}
+			}
+			}
+			
+			
+		}
+
+	public static void main(String[] args) {
+		// TODO Auto-generated method stub
+int[][] weight={{{0,3,5,4,Max,Max,Max,Max,Max,Max,Max,Max},
+			{3,0,Max,Max,3,6,Max,Max,Max,Max,Max,Max},
+			{5,Max,0,2,Max,Max,4,Max,Max,Max,Max,Max},
+			{4,Max,2,0,1,Max,Max,5,Max,Max,Max,Max},
+			{Max,3,Max,1,0,2,Max,Max,4,Max,Max,Max},
+			{Max,6,Max,Max,2,0,Max,Max,Max,5,Max,Max},
+			{Max,Max,4,Max,Max,Max,0,3,Max,Max,6,Max},
+			{Max,Max,Max,5,Max,Max,3,0,6,Max,7,Max},
+			{Max,Max,Max,Max,4,Max,Max,6,0,3,Max,5},
+			{Max,Max,Max,Max,Max,5,Max,Max,3,0,Max,9},
+			{Max,Max,Max,Max,Max,Max,Max,6,7,Max,0,8},
+			{Max,Max,Max,Max,Max,Max,Max,Max,5,9,8,0},
+		};
+String[] str={"v1",};
+int len=str.length;
+Dijkstra dijkstra=new Dijkstra(len);
+	}
+
+}

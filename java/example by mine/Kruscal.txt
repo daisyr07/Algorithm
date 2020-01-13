@@ -1,0 +1,174 @@
+/**
+ * author：Doris19967
+ *
+/
+import java.io.IOException;
+import java.util.Scanner;
+
+public class Kruscal {
+	private int ENum; // 边的数量
+	private char[] V; // 顶点集合
+	private int[][] Mx; // 邻接矩阵
+	private static final int Max = Integer.MAX_VALUE;// 最大值
+	/*
+	 * 创建图(自己输入数据)
+	 */
+
+	public Kruscal() {
+		// 输入"顶点数"和"边数"
+		System.out.printf("请输入连通图的顶点数: ");
+		int v = readInt();
+		System.out.printf("请输入连通图的边数: ");
+		int e = readInt();
+		// 初始化"顶点"
+		V = new char[v];
+		for (int i = 0; i < V.length; i++) {
+			System.out.printf("v(%d): ", i);
+			V[i] = readChar();
+		}
+		// 初始化"边"的权值
+		ENum = e;
+		Mx = new int[v][v];
+		for (int i = 0; i < v; i++) {
+			for (int j = 0; j < v; j++) {
+				if (i == j)
+					Mx[i][j] = 0;
+				else
+					Mx[i][j] = Max;
+			}
+		}
+		for (int i = 0; i < e; i++) {
+			// 读取边的起始顶点,结束顶点,权值
+			System.out.printf("edge(%d):", i);
+			char c1 = readChar(); // 读取"起始顶点"
+			char c2 = readChar(); // 读取"结束顶点"
+			int weight = readInt(); // 读取"权值"
+			int p1 = getPosition(c1);
+			int p2 = getPosition(c2);
+			Mx[p1][p2] = weight;
+			Mx[p2][p1] = weight;
+		}
+	}
+
+	/*
+	 * 读取一个输入整数字符
+	 */
+	private int readInt() {
+		Scanner sc = new Scanner(System.in);
+		return sc.nextInt();
+	}
+
+	/*
+	 * 读取一个输入Char字符
+	 */
+	private char readChar() {
+		char ch = '0';
+		do {
+			try {
+				ch = (char) System.in.read();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		} while (!((ch >= 'a' && ch <= 'z') || (ch >= 'A' && ch <= 'Z')));
+		return ch;
+	}
+
+	/*
+	 * 返回位置
+	 */
+	private int getPosition(char ch) {
+		for (int i = 0; i < V.length; i++)
+			if (V[i] == ch)
+				return i;
+		return -1;
+	}
+
+	public void kruskal1() {
+		int index = 0;
+		EData[] rets = new EData[ENum];
+		int[] vends = new int[ENum]; // 用于保存"已有最小生成树"中每个顶点在该最小树中的终点。
+		EData[] edges;
+		// 获取"图中所有的边"
+		edges = getEdges();
+		// 将边按照"权"的大小进行升序
+		sortEdges(edges, ENum);
+		for (int i = 0; i < ENum; i++) {
+			int p1 = getPosition(edges[i].start); // 获取第i条边的"起点"的序号
+			int p2 = getPosition(edges[i].end); // 获取第i条边的"终点"的序号
+
+			int m = getEnd(vends, p1); // 获取p1在"已有的最小生成树"中的终点
+			int n = getEnd(vends, p2); // 获取p2在"已有的最小生成树"中的终点
+			// 如果m!=n，意味着"边i"与"已经添加到最小生成树中的顶点"没有形成环路
+			if (m != n) {
+				vends[m] = n; // 设置m在"已有的最小生成树"中的终点为n
+				rets[index++] = edges[i]; // 保存结果
+			}
+		}
+		for (int i = 0; i < index; i++) {
+			System.out.printf("(%c,%c) ", rets[i].start, rets[i].end);
+		}
+	}
+
+	/*
+	 * 获取i的终点
+	 */
+	private int getEnd(int[] vends, int i) {
+		while (vends[i] != 0)
+			i = vends[i];
+		return i;
+	}
+
+	/*
+	 * 获取图中的边
+	 */
+	private EData[] getEdges() {
+		int index = 0;
+		EData[] edges;
+		edges = new EData[ENum];
+		for (int i = 0; i < V.length; i++) {
+			for (int j = i + 1; j < V.length; j++) {
+				if (Mx[i][j] != Max) {
+					edges[index++] = new EData(V[i], V[j], Mx[i][j]);
+				}
+			}
+		}
+		return edges;
+	}
+
+	/*
+	 * 对边按照权值大小进行升序
+	 */
+	private void sortEdges(EData[] edges, int el) {
+		for (int i = 0; i < el; i++) {
+			for (int j = i + 1; j < el; j++) {
+				if (edges[i].weight > edges[j].weight) {
+					// 交换"边i"和"边j"
+					EData tmp = edges[i];
+					edges[i] = edges[j];
+					edges[j] = tmp;
+				}
+			}
+		}
+	}
+
+	// 边的结构体
+	private static class EData {
+		char start; // 边的起点
+		char end; // 边的终点
+		int weight; // 边的权重
+
+		public EData(char start, char end, int weight) {
+			this.start = start;
+			this.end = end;
+			this.weight = weight;
+		}
+	}
+
+	public static void main(String[] args) {
+		Kruscal pG;
+		pG = new Kruscal();
+		System.out.print("Kruskal算法:");
+		pG.kruskal1();
+	}
+
+}

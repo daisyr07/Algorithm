@@ -1,0 +1,62 @@
+/**
+ * author：Doris19967
+ *
+/
+
+import java.sql.Date;
+import java.text.SimpleDateFormat;
+//设计新的欧几里得算法版本并编写程序实现，比较新的欧几里得算法与原算法的程序运行时间；
+public class gcd {
+	public static int gcd1(int m, int n) {
+		while (n != 0) {
+			int r = m % n;
+			m = n;
+			n = r;
+		}
+		return m;
+	}
+	public static int gcd2(int m, int n) {
+		int r = m - n;
+		while (r != 0) {
+			if (n < r) {
+				m = r;
+			} else {
+				m = n;
+				n = r;
+			}
+			r = m - n;
+		}
+		return n;
+	}
+
+	public static long time1() {
+		long startTime1 = System.currentTimeMillis(); // 获取开始时间
+		SimpleDateFormat a = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");// 设置日期格式
+		System.out.println(a.format(new Date(startTime1)));// new Date()为获取当前系统时间
+		System.out.println("程序开始执行时间：" + startTime1);		
+		gcd1(60, 24);
+		long endTime1 = System.currentTimeMillis(); // 获取结束时间
+		System.out.println("程序结束执行时间：" + endTime1);
+		System.out.println(a.format(new Date(endTime1)));// new Date()为获取当前系统时间
+		long time1=endTime1-startTime1;
+		System.out.println("原算法程序运行时间为 " + time1+ "ms");
+		return time1;
+	}
+public static long time2() {
+	long startTime2 = System.currentTimeMillis(); // 获取开始时间
+	SimpleDateFormat b = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");// 设置日期格式
+	System.out.println(b.format(new Date(startTime2)));// new Date()为获取当前系统时间
+	System.out.println("程序开始执行时间：" + startTime2);
+	gcd2(60, 24);
+	long endTime2 = System.currentTimeMillis(); // 获取结束时间
+	System.out.println("程序结束执行时间：" + endTime2);
+	System.out.println(b.format(new Date(endTime2)));// new Date()为获取当前系统时间
+	long time2=endTime2-startTime2;
+	System.out.println("新的欧几里得算法的程序运行时间为 " + time2+ "ms");
+	return time2;
+}
+
+	public static void main(String[] args) {
+		System.out.println("新的欧几里得算法与原算法的程序运行时间差为 " + (time2() - time1()) + "ms");
+	}
+}

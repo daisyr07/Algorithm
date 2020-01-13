@@ -1,0 +1,55 @@
+/**
+ * author：Doris19967
+ *
+/
+
+import java.util.*;
+
+
+public class Sort {
+//选择排序，升序
+	public static int[] SelectionSort(int[] a){
+		for(int i=0;i<a.length;i++){
+			int min=i;
+			for(int j=i+1;j<a.length;j++){
+				if(a[min]>a[j]){
+					min=j;
+				}
+			}
+			if(i!=min){
+				int temp=a[i];
+				a[i]=a[min];
+				a[min]=temp;
+			}
+		}
+		return a;
+	}
+	//冒泡排序，降序
+	public static int[] BubbleSort(int[] a){
+		for(int i=0;i<a.length;i++){
+			for(int j=0;j<a.length-1;j++){
+				if(a[j+1]>a[j]){
+					int temp=a[j];
+					a[j]=a[j+1];
+					a[j+1]=temp;
+				}
+			}
+		}
+		return a;
+	}
+	public static void main(String[] args) {
+		System.out.print("请输入几个数并以空格分开:");
+		Scanner s = new Scanner(System.in);
+		String str=s.next().toString();
+		String[] d=str.split(",");
+		 int[] a=new int[d.length];
+		 for(int i=0;i<a.length;i++){
+			 a[i]=Integer.parseInt(d[i]);
+			 System.out.print(a[i]+" ");
+		 }
+	   System.out.println();
+       System.out.println("输出选择排序后的数组:"+Arrays.toString(SelectionSort(a)));
+       System.out.println("输出冒泡排序后的数组:"+Arrays.toString(BubbleSort(a)));
+       s.close();
+	}
+}

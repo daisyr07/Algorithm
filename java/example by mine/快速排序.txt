@@ -1,0 +1,74 @@
+/**
+ * author：Doris19967
+ *
+/
+
+import java.util.Scanner;
+
+public class Sort3 {
+	//快速排序
+	private static void Sort(int[] a,int start,int end) {
+		int i,j;
+		int tep;
+		int t;
+        if(start>end){
+            return;
+        }
+        i=start;
+        j=end;
+        tep = a[start];
+        while (i<j) {
+            //先看右边，依次往左递减
+            while (tep<=a[j]&&i<j) {
+                j--;
+            }
+            //再看左边，依次往右递增
+            while (tep>=a[i]&&i<j) {
+                i++;
+            }
+            //如果满足条件则交换
+            if (i<j) {
+                t = a[j];
+                a[j] = a[i];
+                a[i] = t;
+            }
+ 
+        }
+        //最后将基准为与i和j相等位置的数字交换
+         a[start] = a[i];
+         a[i] = tep;
+        //递归调用左半数组
+       Sort(a, start, j-1);
+        //递归调用右半数组
+        Sort(a, j+1, end);
+	}	 
+	  private static void QuickSort(int[] a) {
+			Sort(a,0,a.length-1);			
+		}
+	public static int[] BuildArray() {
+		System.out.print("请输入几个数并以逗号分开:");
+		Scanner s = new Scanner(System.in);
+		String str = s.next().toString();
+		String[] d = str.split(",");
+		int[] a = new int[d.length];
+		for (int i = 0; i < a.length; i++) {
+			a[i] = Integer.parseInt(d[i]);
+		}
+		//Arrays.sort(a);		
+		return a;
+	}
+	public static void Print(String pr,int[] a) {
+		System.out.print(pr+"\n");
+		for (int i = 0; i < a.length; i++) {
+			System.out.print(a[i] +" ");		
+		}
+		System.out.println(" ");
+	}
+	public static void main(String[] args) {
+       int[] arr=BuildArray();
+       Print("输入的初始数组是：",arr);
+       QuickSort(arr);
+       Print("快速排序后：",arr);
+	}
+
+}

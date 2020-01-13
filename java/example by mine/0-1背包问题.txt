@@ -1,0 +1,103 @@
+/**
+ * author：Doris19967
+ *
+/
+
+import java.util.Scanner;
+
+public class ZeroOnePack {
+
+	/**
+	 * 使用二维数组非递归的方法求解0/1背包问题
+	 */
+	// U表示物体的个数N，C表示背包的容量V
+	int U, C;
+	// 物品的重量集合W=｛w1，w2，….，wn｝，下标从1开始
+	private int[] weight;
+	// 物品价值集合V=｛v1,v2，….，vn｝，下标从1开始
+	private int[] value;
+	// 二维数组，用来保存每种状态下的最大收益
+	private int[][] F;
+
+	/**
+	 * 使用非递归方式， 求解F[0 .. U][0 .. C]，即for循环从下至上求解
+	 */
+	public void ZeroOnePackNonRecursive() {
+		// 对二维数组F进行初始化
+		for (int j = 0; j <= C; j++) {
+			F[0][j] = 0;
+		}
+		// 注意边界问题，i是从1开始的，j是从0开始的
+		// 因为F[i - 1][j]中i要减1
+		for (int i = 1; i <= U; i++) {
+			for (int j = 0; j <= C; j++) {
+				// 如果容量为j的背包放得下第i个物体
+				if (j >= weight[i]) {
+					F[i][j] = Math.max(F[i - 1][j - weight[i]] + value[i], F[i - 1][j]);
+				} else {
+					// 放不下，只能选择不放第i个物体
+					F[i][j] = F[i - 1][j];
+				}
+			}
+		}
+		// 打印所有结果，我们要求的是F[U][C]
+		for (int i = 0; i <= U; i++) {
+			for (int j = 0; j <= C; j++) {
+				System.out.print(F[i][j] + " ");
+			}
+			System.out.println();
+		}
+		System.out.println("最大的总价值为：" + F[U][C]);
+	}
+
+	/**
+	 * 求解F[n][m]这个最优值具体选取哪几样物品能获得最大价值，但只会输出一种情况
+	 * 
+	 * @param n
+	 *            表示前n个物体，n <= N
+	 * @param v
+	 *            表示背包的容量，v <= V
+	 */
+	/*
+	 * public void printResult(int u , int c) { boolean[] isAdd = new boolean[u +
+	 * 1];
+	 * 
+	 * for(int i =u; i >= 1; i--) { if(F[i][c] == F[i-1][c]) isAdd[i] = false; else
+	 * { isAdd[i] = true; c -= weight[i]; } }
+	 * 
+	 * for(int i = 1; i <= u; i++) { System.out.print(isAdd[i] + " "); }
+	 * System.out.println(); }
+	 */
+
+	/**
+	 * 输入格式： 5 10 2 2 6 5 4 6 3 5 4 6 result:15 第一行是物体个数、背包总空间； 第二行是每个物体的空间；
+	 * 第三行是每个物体的收益。
+	 */
+	public void Input() {
+		Scanner sc = new Scanner(System.in);
+		System.out.print("请输入物品个数：");
+		U = sc.nextInt();
+		System.out.print("请输入背包容量：");
+		C = sc.nextInt();
+		// 下标从1开始，表示第1个物品
+		weight = new int[U + 1];
+		value = new int[U + 1];
+		// 注意是 N + 1，因为需要一个初始状态F[0][0]，表示前0个物品放进空间为0的背包的最大收益
+		F = new int[U + 1][C + 1];
+		System.out.print("请依次输入物品重量：");
+		for (int i = 1; i <= U; i++) {
+			weight[i] = sc.nextInt();
+		}
+		System.out.print("请依次输入物品价值：");
+		for (int i = 1; i <= U; i++) {
+			value[i] = sc.nextInt();
+		}
+	}
+
+	public static void main(String[] args) {
+		ZeroOnePack zop = new ZeroOnePack();
+		zop.Input();
+		zop.ZeroOnePackNonRecursive();
+		// zop.printResult(zop.U,zop.C);
+	}
+}

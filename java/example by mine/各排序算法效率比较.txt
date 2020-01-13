@@ -1,0 +1,185 @@
+/**
+ * author：Doris19967
+ *
+/
+
+import java.util.Random;
+import java.util.Arrays;
+
+public class Nsort {
+
+	/**
+	 * 各排序算法效率比较
+	 */
+
+	// 1、冒泡排序
+	int[] bubbleSort(int[] data) {
+		for (int i = 1; i < data.length; i++) {
+			for (int j = 0; j < data.length - i; j++) {
+				if (data[j] > data[j + 1]) {
+					int temp = data[j + 1];
+					data[j + 1] = data[j];
+					data[j] = temp;
+				}
+			}
+		}
+		return data;
+	}
+
+	
+	// 2.选择排序
+	int[] selectSort(int[] data) {
+		for (int i = 0; i < data.length - 1; i++) {
+			int index = i;
+			for (int j = i + 1; j < data.length; j++) {
+				if (data[j] < data[index]) {
+					index = j;
+				}
+			}
+			int temp = data[i];
+			data[i] = data[index];
+			data[index] = temp;
+		}
+		return data;
+	}
+
+	// 3.插入排序
+	int[] insertSort(int[] data) {
+		for (int i = 1; i < data.length; i++) {
+			int index = data[i];
+			int j = i;
+			for (j -= 1; j >= 0 && index < data[j]; j--) {
+				data[j + 1] = data[j];
+			}
+			data[j + 1] = index;
+		}
+		return data;
+	}
+
+	// 4.合并排序
+	void mergeArray(int[] data, int start, int mid, int end) {
+		int[] temp = new int[end - start + 1];
+		int s = start;
+		int e = mid + 1;
+		int k = 0;
+		while (s <= mid && e <= end) {
+			if (data[s] < data[e]) {
+				temp[k++] = data[s++];
+			} else {
+				temp[k++] = data[e++];
+			}
+		}
+		while (s <= mid) {
+			temp[k++] = data[s++];
+		}
+		while (e <= end) {
+			temp[k++] = data[e++];
+		}
+		for (int i = 0; i < temp.length; i++) {
+			data[start + i] = temp[i];
+		}
+	}
+
+	
+	// 5.快速排序
+		int[] quickSort(int[] data, int start, int end) {
+			int tstart = start;
+			int tend = end;
+			int base = data[tstart];
+			while (tstart < tend) {
+				while (tstart < tend && data[tend] >= base) {
+					tend--;
+				}
+				if (data[tend] < base) {
+					int temp = data[tstart];
+					data[tstart] = data[tend];
+					data[tend] = temp;
+				}
+				while (tstart < tend && data[tstart] <= base) {
+					tstart++;
+				}
+				if (data[tstart] > base) {
+					int temp = data[tend];
+					data[tend] = data[tstart];
+					data[tstart] = temp;
+				}
+			}
+			if (tstart > start) {
+				quickSort(data, start, tstart - 1);
+			}
+			if (tend < end) {
+				quickSort(data, tend + 1, end);
+			}
+			return data;
+		}
+		int[] mergeSort(int[] data, int start, int end) {
+			int mid = (end - start) / 2 + start;
+			if (start < end) {
+				mergeSort(data, start, mid);
+				mergeSort(data, mid + 1, end);
+				mergeArray(data, start, mid, end);
+			}
+			return data;
+		}
+	// 主方法main
+	public static void main(String[] args) {
+		// 各排序算法效率比较
+		int n = 1000000;// 数据的个数
+		// 记录算法开始的时间 long start;
+	// 记录算法结束的时间 	long end;
+		Nsort ss = new Nsort();
+		int[] data = new int[n];	
+		// 随机生成100w个序列保存于数组中
+		double max=Math.pow(10,9);
+		int min=1;
+		for (int i = 0; i < n; i++) {
+			data[i] = (int) (Math.random() * (max-min)+min);
+		}
+		int[] data1 = new int[n];
+		int[] data2 = new int[n];
+		int[] data3 = new int[n];
+		int[] data4 = new int[n];
+		int[] data5 = new int[n];
+		// 复制数组，java中对数组的复制只能是System.arraycopy
+		System.arraycopy(data, 0, data1, 0, n);
+		System.arraycopy(data, 0, data2, 0, n);
+		System.arraycopy(data, 0, data3, 0, n);
+		System.arraycopy(data, 0, data4, 0, n);
+		System.arraycopy(data, 0, data5, 0, n);
+		System.out.println("排序前的数组："+Arrays.toString(data));
+		// 1.冒泡排序
+		long start1 = System.nanoTime();
+		data1 = ss.bubbleSort(data1);
+		long end1 = System.nanoTime();
+		//System.out.println("冒泡排序后的数组："+Arrays.toString(data1));
+		System.out.println("冒泡排序用时：" + (end1 - start1) + "ns");
+		// 2.选择排序
+		long start2 = System.nanoTime();
+		data2 = ss.selectSort(data2);
+		long end2 = System.nanoTime();
+		//System.out.println("选择排序后的数组："+Arrays.toString(data2));
+		System.out.println("选择排序用时：" + (end2 - start2) + "ns");
+		// 3.插入排序
+		long start3 = System.nanoTime();
+		data3 = ss.insertSort(data3);
+		long end3 = System.nanoTime();
+		//System.out.println("插入排序后的数组："+Arrays.toString(data3));
+		System.out.println("插入排序用时：" + (end3 - start3) + "ns");
+		// 4.合并排序
+		long start4 = System.nanoTime();
+		data4 = ss.mergeSort(data4, 0, data4.length - 1);
+		long end4 = System.nanoTime();
+		// System.out.println("合并排序后的数组："+Arrays.toString(data4));
+		System.out.println("归并排序用时：" + (end4 - start4) + "ns");
+		// 5.快速排序
+		long start5 = System.nanoTime();
+		data5 = ss.quickSort(data5, 0, data5.length - 1);
+		long end5 = System.nanoTime();
+		//System.out.println("快速排序后的数组："+Arrays.toString(data5));
+		System.out.println("快速排序用时：" + (end5 - start5) + "ns");
+		System.out.println("排序后的数组："+Arrays.toString(data1));
+		System.out.println("排序后的数组："+Arrays.toString(data2));
+		System.out.println("排序后的数组：");
+	}
+
+}

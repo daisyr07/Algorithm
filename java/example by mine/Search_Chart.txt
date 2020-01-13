@@ -1,0 +1,82 @@
+package com.jeeplus.modules.management.web;
+ 
+import java.awt.Font;
+
+import java.awt.Color;
+import java.awt.Font;
+import org.jfree.chart.ChartFactory;
+import org.jfree.chart.ChartFrame;
+import org.jfree.chart.JFreeChart;
+import org.jfree.chart.StandardChartTheme;
+import org.jfree.chart.plot.CategoryPlot;
+import org.jfree.chart.plot.PlotOrientation;
+import org.jfree.data.category.CategoryDataset;
+import org.jfree.data.category.DefaultCategoryDataset;
+
+public class Search_Chart {
+	/**
+	 * 创建JFreeChart Line Chart（折线图）
+	 */
+	public static void main(String[] args) {
+		 StandardChartTheme mChartTheme = new StandardChartTheme("CN");
+		    mChartTheme.setLargeFont(new Font("黑体", Font.BOLD, 20));
+		    mChartTheme.setExtraLargeFont(new Font("宋体", Font.PLAIN, 15));
+		    mChartTheme.setRegularFont(new Font("宋体", Font.PLAIN, 15));
+		    ChartFactory.setChartTheme(mChartTheme);		
+		    CategoryDataset mDataset = GetDataset();
+		    JFreeChart mChart = ChartFactory.createLineChart(
+		        "平均时间效率图",//图名字
+		        "输入规模",//横坐标
+		        "时间（ns）",//纵坐标
+		        mDataset,//数据集
+		        PlotOrientation.VERTICAL,
+		        true, // 显示图例
+		        true, // 采用标准生成器 
+		        false);// 是否生成超链接
+		    
+		    CategoryPlot mPlot = (CategoryPlot)mChart.getPlot();
+		    mPlot.setBackgroundPaint(Color.LIGHT_GRAY);
+		    mPlot.setRangeGridlinePaint(Color.BLUE);//背景底部横虚线
+		    mPlot.setOutlinePaint(Color.RED);//边界线
+		    
+		    ChartFrame mChartFrame = new ChartFrame("平均时间效率图", mChart);
+		    mChartFrame.pack();
+		    mChartFrame.setVisible(true);
+
+	  }	
+	 public static CategoryDataset GetDataset()
+	  {
+	    
+	  DefaultCategoryDataset mDataset = new DefaultCategoryDataset();
+	    mDataset.addValue(3333, "顺序查找", "10");
+	    mDataset.addValue(2434, "顺序查找", "50");
+	    mDataset.addValue(16712, "顺序查找", "100");
+	    mDataset.addValue(7437, "顺序查找", "200");
+	    mDataset.addValue(7691, "顺序查找", "300");
+	    mDataset.addValue(4532, "顺序查找", "400");
+	    mDataset.addValue(4541, "顺序查找", "500");
+	    mDataset.addValue(6674, "顺序查找",  "600");
+	    mDataset.addValue(3518, "顺序查找", "700");
+	    mDataset.addValue(4929, "顺序查找", "800");
+	    mDataset.addValue(2143, "顺序查找", "900");
+	    mDataset.addValue(2388, "顺序查找", "1000");
+	    mDataset.addValue(3502, "顺序查找", "1100");
+	    mDataset.addValue(3555, "折半查找", "10");
+	    mDataset.addValue(2309, "折半查找", "50");
+	    mDataset.addValue(1462, "折半查找", "100");
+	    mDataset.addValue(2755, "折半查找", "200");
+	    mDataset.addValue(1264, "折半查找", "300");
+	    mDataset.addValue(607, "折半查找", "400");
+	    mDataset.addValue(898, "折半查找", "500");
+	    mDataset.addValue(747, "折半查找",  "600");
+	    mDataset.addValue(701, "折半查找", "700");
+	    mDataset.addValue(769, "折半查找", "800");
+	    mDataset.addValue(755, "折半查找", "900");
+	    mDataset.addValue(693, "折半查找", "1000");
+	    mDataset.addValue(612, "折半查找", "1100");
+	    return mDataset;
+	}
+	
+	
+}
+ 

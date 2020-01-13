@@ -1,0 +1,48 @@
+/**
+ * author：Doris19967
+ *
+/
+
+import java.util.Scanner;
+
+public class Sort1 {
+	//插入排序
+	public static void InsertSort(int[] a) {
+		int i,j;
+		int n=a.length;
+		int temp;
+		for(i=1;i<n;i++) {
+			temp=a[i];
+			for(j=i-1; j>=0&&a[j]>temp; j--){
+                a[j+1] = a[j];
+            }
+            a[j+1] = temp;
+            System.out.print("第"+i+"次直接插入排序后的数组："); 
+            Print(a);
+		}
+	}
+	public static int[] BuildArray() {
+		System.out.print("请输入几个数并以逗号分开:");
+		Scanner s = new Scanner(System.in);
+		String str = s.next().toString();
+		String[] d = str.split(",");
+		int[] a = new int[d.length];
+		for (int i = 0; i < a.length; i++) {
+			a[i] = Integer.parseInt(d[i]);
+		}
+		//Arrays.sort(a);		
+		return a;
+	}
+	public static void Print(int[] a) {
+		for (int i = 0; i < a.length; i++) {
+			System.out.print(a[i] + " ");
+		}
+		System.out.println(" ");
+	}
+	public static void main(String[] args) {
+       int[] arr=BuildArray();
+       System.out.print("输入的初始数组是：");
+       Print(arr);
+       InsertSort(arr);
+	}
+}

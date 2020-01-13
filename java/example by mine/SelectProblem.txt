@@ -1,0 +1,109 @@
+/**
+ * author：Doris19967
+ *
+/
+import java.util.Arrays;
+import java.util.Scanner;
+
+public class SelectProblem {
+	/*快速选择问题
+	 * 参数A:给定随机数数组 
+	 * 参数k:要求输出的第k个最小元素 
+	 * 函数功能：返回数组A的第k个最小元素的值
+	 */	
+	
+   //交换位置
+	public static void swap(int[] a, int i, int j) {
+		int tmp = a[i];
+		a[i] = a[j];
+		a[j] = tmp;
+	}
+	/*
+	 * 划分算法
+	 * 寻找支点的方法，将两个端点和中间位置的三个元素的中间元素值作为支点
+	 * 顺便让left小于支点元素小于right，可以减少一次比较次数
+	 */	
+	public static int Lomuto(int[] a, int left, int right) {
+		int mid = (left + right) / 2;
+		if (a[left] > a[mid]) {
+			swap(a, left, mid);
+		}
+		if (a[right] < a[mid]) {
+			swap(a, right, mid);
+		}
+		if (a[left] > a[right]) {
+			swap(a, left, right);
+		}
+		// 将支点元素移动到最右边元素的左边，这样可以减少一次比较次数
+		swap(a, mid, right - 1);
+		return a[right - 1];
+	}
+	//递归解决选择问题
+	public static void QuickSelect(int[] a, int left, int right, int k) {
+		if (right - left <= 1) {
+			return;
+		}
+		int pivot = Lomuto(a, left, right); // 取三数中值作为枢纽元
+		int i = left;
+		int j = right - 1;
+		for (;;) {
+			while (a[++i] < pivot) {
+			}
+			while (a[--j] > pivot) {
+			}
+			if (i < j) {
+				swap(a, i, j);
+			} else {
+				break;
+			}
+		}
+		// 重置枢纽元
+		swap(a, i, right - 1);
+		if (i == k) {
+			return;
+		} else if (i > k) {
+			QuickSelect(a, left, i - 1, k);
+		} else {
+			QuickSelect(a, i + 1, right, k - i + 1);
+		}
+	}
+	// 定义一个随机生成的数组
+	public static int[] Random(int r) {
+		int arr[] = new int[r];
+		int max = 10000, min = 1;
+		for (int i = 0; i < arr.length; i++) {
+			arr[i] = (int) (Math.random() * (max - min) + min);
+		}
+		Arrays.sort(arr);
+		return arr;
+	}
+	// 输入
+	//输入第k个元素的k值
+	public static int Input1() {
+		Scanner sc = new Scanner(System.in);
+		System.out.print("请输入K：");
+		int temp = sc.nextInt();
+		return temp;
+	}
+	//输入数组长度
+	public static int Input2() {
+		Scanner sc = new Scanner(System.in);
+		System.out.print("请输入数组长度：");
+		int i = sc.nextInt();
+		return i;
+	}
+	//输出
+	public static void Print() {
+		int i = Input2();
+		int[] arr = Random(i);
+		System.out.println("原数组为：" + Arrays.toString(arr));
+		int k = Input1();
+		QuickSelect(arr, 0, arr.length - 1, k);
+		System.out.println("第" + k + "最小的元素为:" + arr[k - 1]);
+	}
+
+	public static void main(String[] args) {
+		Print();
+	}
+
+}

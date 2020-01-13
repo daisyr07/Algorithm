@@ -1,0 +1,97 @@
+/**
+ * author：Doris19967
+ *
+/
+
+import java.util.*;
+
+public class Search {
+	// 顺序查找
+	public static int OrderSearch(int[] a, int temp) {
+		for (int i = 0; i < a.length; i++) {
+			if (a[i] == temp) {
+				return i;
+			}
+		}
+		return -1;
+	}
+
+	// 折半查找
+	public static int BinarySearch(int[] a, int temp) {
+		int low = 0;
+		int high = a.length - 1;
+		while (low <= high) {
+			int middle = (low + high) / 2;
+			if (temp == a[middle]) {
+				return middle;
+			} else if (temp < a[middle]) {
+				high = middle - 1;
+			} else {
+				low = middle + 1;
+			}
+		}
+		return -1;
+	}
+	
+	// 定义一个随机生成的数组
+	public static int[] Random(int r) {
+		int arr[] = new int[r];
+		int max = 10000, min = 1;
+		for (int i = 0; i < arr.length; i++) {
+			arr[i] = (int) (Math.random() * (max - min) + min);
+		}
+		Arrays.sort(arr);
+		return arr;
+	}
+
+	// 输入
+	public static int Input() {
+		Scanner sc = new Scanner(System.in);
+		System.out.print("请输入数组的长度：");
+		int temp = sc.nextInt();
+		return temp;
+	}
+
+	// 计算时间
+	public static void Time() {
+		int x = Input();
+		int max = 10000, min = 1;
+		int tm1= 0; // 顺序查找的执行时间
+		int tms1= 0; // 顺序查找的操作次数
+		int tm2=0; // 折半查找的执行时间
+		int tms2=0; // 折半查找的操作次数
+		for (int i = 5; i <= x; i++) {
+			int[] arr = Random(i);
+			System.out.println("已排序好的数组：" + Arrays.toString(arr));
+			int temp = (int) (Math.random() * (max - min) + min);
+			System.out.println("查找的数是：" + temp);
+			long startTime1= System.nanoTime();
+			int os = OrderSearch(arr, temp);
+			long endTime1 = System.nanoTime();
+			if (os == -1) {
+				System.out.println("顺序查找失败！");
+			} else {
+				System.out.println("顺序查找成功，数字位于数组第" + (os + 1) + "位！");
+			}
+			tm1+= (endTime1-startTime1);
+			tms1++;
+			long startTime2 = System.nanoTime();
+			int bs = BinarySearch(arr, temp);
+			long endTime2 = System.nanoTime();
+			if (bs == -1) {
+				System.out.println("折半查找失败！");
+			} else {
+				System.out.println("折半查找成功，数字位于数组第" + (bs + 1) + "位！");
+			}
+			tm2+= (endTime2-startTime2);
+			tms2++;			
+		}
+	    long avgos=tm1/tms1;
+		long avgbs=tm2/tms2;
+		System.out.println("顺序查找的时间为：" + avgos + "ns");
+		System.out.println("折半查找的时间为：" + avgbs + "ns");
+	}
+	public static void main(String[] args) {
+		Time();
+	}
+}

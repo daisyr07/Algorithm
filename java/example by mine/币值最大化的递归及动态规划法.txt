@@ -1,0 +1,67 @@
+/**
+ * author：Doris19967
+ *
+/
+
+import java.util.Scanner;
+
+public class CoinRow {
+	public static void main(String[] args) {
+		Scanner sc = new Scanner(System.in);
+		System.out.print("请输入硬币数目：");
+		int n = sc.nextInt();
+		int c[] = new int[n + 1];
+		int d[] = new int[n + 1];
+		// System.out.println();
+		System.out.print("请输入硬币币值：");
+		for (int i = 1; i <= n; i++) {
+			c[i] = sc.nextInt();
+		}
+		System.out.println("----------------");
+		System.out.println("动态规划");
+		long startTime2 = System.nanoTime();
+		int max_sum2 = CR2(c, n, d);
+		long endTime2 = System.nanoTime();
+		long t2 = endTime2 - startTime2;
+		long startTime1 = System.nanoTime();
+		rCoinRow(c,n);
+		long endTime1 = System.nanoTime();	
+	    long t1=endTime1-startTime1;
+	     System.out.println("递归所花的时间为："+t1+"ns");
+		System.out.println("动态规划所花的时间为：" + t2 + "ns");
+		System.out.println("币值最大为：" + max_sum2);
+	}
+	//递归的“币值最大化”
+		private static int rCoinRow(int c[], int n) {
+			if (n == 1) {
+				return c[1];
+			}
+			if (n == 0) {
+				return c[0];
+			}
+			if (n >= 2) {
+					c[n] = Math.max(rCoinRow(c,n - 2)+ c[n], rCoinRow(c,n - 1));
+					
+				}
+				return c[n];
+			}
+	
+	
+	//动态规划的“币值最大化”
+	public static int CR2(int[] c, int n, int[] d) {
+		if (n < 2) // 长度小于2的话，直接返回结果
+		{
+			return d[n];
+		} else {
+			d[0] = 0;// 第0个位置为0
+			d[1] = c[1]; // 第一个位置就为第一个位置硬币的面值
+			for (int i = 2; i <= n; i++) {
+				d[i] = Math.max(d[i - 2] + c[i], d[i - 1]); // 状态转移方程
+				System.out.println("当前位置为" + i + "的最大硬币和为:" + d[i]);
+			}
+			return d[n];
+		}
+
+	}
+
+}

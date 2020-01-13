@@ -1,0 +1,46 @@
+/**
+ * author：Doris19967
+ *
+/
+
+import java.sql.Date;
+import java.text.SimpleDateFormat;
+import java.util.Scanner;
+//设计并实现斐波那契数算法(参见P62)，记录计算不同F(n)值的基本操作执行次数以及程序运行时间。将运行时间以曲线图的形式展示出来。
+public class gcd{
+	public static int fib(int n)
+	{ 
+		int ct = 0;//操作次数
+		int a=0;//第一个数
+		int b=1;//第二个数
+		int c=0;
+		if(n==0||n==1) {
+			return 1;
+		}else {
+		for (int i=0;i<n;i++) {
+			c=a+b;
+			a=b;
+			b=c;
+			ct++;
+		}
+	return ct;}
+	}	
+
+	public static void main(String[] args) {	
+		Scanner s = new Scanner(System.in);
+		System.out.print("请输入n:");
+		int n = s.nextInt();
+		System.out.println("F(n)值的基本操作执行次数" + fib(n));
+		long st = System.currentTimeMillis();
+		SimpleDateFormat a = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		System.out.println(a.format(new Date(st)));
+		System.out.println("程序开始执行时间：" + st);		
+		fib(n);
+		long et = System.currentTimeMillis();
+		System.out.println("程序结束执行时间：" + et);
+		System.out.println(a.format(new Date(et)));
+		long time1=et-st;
+		System.out.println("程序运行时间为 " + time1+ "ms");
+		s.close();
+	}
+	}

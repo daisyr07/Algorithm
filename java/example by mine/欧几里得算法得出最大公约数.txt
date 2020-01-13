@@ -1,0 +1,28 @@
+/**
+ * author：Doris19967
+ *
+/
+
+import java.util.*;
+
+public class gcd {
+
+	public static int gcd1(int m,int n){
+		while (n!=0){
+			int r=m%n;
+			m=n;
+			n=r;
+		}
+		return m;		
+	}
+	public static void main(String[] args) {
+		// TODO Auto-generated method stub
+		Scanner s=new Scanner(System.in);
+		System.out.print("请输入一个整数m:");
+		int m=s.nextInt();
+		System.out.print("请输入一个小于m的整数n:");
+		int n=s.nextInt();
+System.out.print("使用欧几里得算法得出的最大公约数为："+gcd1(m,n));
+s.close();
+	}
+}

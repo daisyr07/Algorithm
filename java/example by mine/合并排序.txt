@@ -1,0 +1,80 @@
+/**
+ * author：Doris19967
+ *
+/
+
+import java.util.Scanner;
+
+public class Sort2 {
+	//合并排序
+	private static int number=0;
+	private static void Sort(int[] a,int start,int end) {
+		if(start>=end) {
+			return;
+		}
+		int mid=(start+end)/2;
+		Sort(a,start,mid);
+		Sort(a,mid+1,end);
+		Merge(a,start,mid,end);
+	}
+	  private static void Merge(int[] a, int start, int mid, int end) {		    
+	        int[] tmp = new int[a.length];
+	        int r1 = mid + 1;
+	        int k=start;
+	        int c=start;
+	        // 逐个归并
+	        while(start<=mid && r1 <= end) {
+	            if (a[start] <= a[r1]) {
+	                tmp[k++] = a[start++];}
+	            else {
+	                tmp[k++] = a[r1++];}
+	        }
+	            // 将左边剩余的归并
+	            while (start<=mid) {
+	                tmp[k++] = a[start++];
+	            }
+	            // 将右边剩余的归并
+	            while ( r1 <= end ) {
+	                tmp[k++] = a[r1++];
+	            }
+	            System.out.println("第"+(++number)+"趟排序：\t");
+	          //从临时数组拷贝到原数组
+	             while(c<=end){
+	                    a[c]=tmp[c];
+	                    //输出中间归并排序结果
+	                    System.out.print(a[c]+" ");
+	                    c++;
+	                }
+	             System.out.println();
+	            }
+	  private static void MergeSort(int[] a) {
+			System.out.println("合并排序开始：");
+			Sort(a,0,a.length-1);			
+		}
+	public static int[] BuildArray() {
+		System.out.print("请输入几个数并以逗号分开:");
+		Scanner s = new Scanner(System.in);
+		String str = s.next().toString();
+		String[] d = str.split(",");
+		int[] a = new int[d.length];
+		for (int i = 0; i < a.length; i++) {
+			a[i] = Integer.parseInt(d[i]);
+		}
+		//Arrays.sort(a);		
+		return a;
+	}
+	public static void Print(String pr,int[] a) {
+		System.out.print(pr+"\n");
+		for (int i = 0; i < a.length; i++) {
+			System.out.print(a[i] +" ");		
+		}
+		System.out.println(" ");
+	}
+	public static void main(String[] args) {
+       int[] arr=BuildArray();
+       Print("输入的初始数组是：",arr);
+       MergeSort(arr);
+       Print("合并排序后：",arr);
+	}
+
+}
