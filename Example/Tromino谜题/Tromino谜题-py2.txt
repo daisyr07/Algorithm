@@ -1,0 +1,206 @@
+from tkinter import *
+#递归分为四个象限，运用分治法求解
+class Tromino():
+    """
+    begin:方块起点
+    end：方块终点
+    n：方块个数
+    """
+    def __init__(self, begin, end, n):
+        self.begin = begin
+        self.end = end
+        self.n = int(n)
+    def output(self):
+        self.begin.output()
+        self.end.output()
+        print('n:', self.n, '\n')
+# 定义棋盘格式
+class point():
+    def __init__(self, x, y):
+        self.x = int(x)
+        self.y = int(y)
+    def output(self):
+        print('x:', self.x, ' y:', self.y)
+# 定义横纵轴指针
+# print(len(Tromino_list))
+# print(Tromino_list)
+def cutBlock(b, x):
+    """
+    切割方块为4部分
+    :param b: 待切割的块
+    :param x: 返回第x部分
+    :return: 切割完成的块
+    """
+    # 切割方块 将横纵坐标根据象限来切割
+    bb = b.begin
+    be = b.end
+    n = b.n
+    if x == 1:
+        ex = point((bb.x + be.x) / 2, (bb.y + be.y) / 2)
+        bx = Tromino(bb, ex, n / 2)
+    elif x == 2:
+        beginx = point((bb.x + be.x) / 2, bb.y)
+        endx = point(be.x, (bb.y + be.y) / 2)
+        bx = Tromino(beginx, endx, n / 2)
+    elif x == 3:
+        beginx = point(bb.x, (bb.y + be.y) / 2)
+        endx = point((bb.x + be.x) / 2, be.y)
+        bx = Tromino(beginx, endx, n / 2)
+    elif x == 4:
+        beginx = point((be.x + bb.x) / 2, (bb.y + be.y) / 2)
+        endx = point(be.x, be.y)
+        bx = Tromino(beginx, endx, n / 2)
+    # bx.output()
+    return bx
+def decideblock(b, foundblock):
+    """
+    查询foundblock是否在b块中
+    :param b: 被查找的块
+    :param foundblock: 查找的块
+    :return: True False
+    """
+    if foundblock.x <= b.end.x and foundblock.y <= b.end.y and foundblock.x > b.begin.x and foundblock.y > b.begin.y:
+        return True
+    else:
+        return False
+    # 查找象限中是否有有已经存在的棋子
+def fullBlock(b, foundblock):
+    """
+    计算方块填充
+    :param b: 方块对象
+    :param foundblock: 找到的块
+    :return: 递归
+    """
+    # 将块递归分为四个象限，并且验证块中是否有棋子
+    global center  # 将每次切割选择块的位置切割中心定义为全局变量
+    if b.n > 2:  # 继续分割
+        block1 = cutBlock(b, 1)
+        block2 = cutBlock(b, 2)
+        block3 = cutBlock(b, 3)
+        block4 = cutBlock(b, 4)
+        cb1 = block1.end
+        cb2 = point(block1.end.x + 1, block1.end.y)
+        cb3 = point(block1.end.x, block1.end.y + 1)
+        cb4 = point(block1.end.x + 1, block1.end.y + 1)
+        center += 1
+        print('center:', center) # 切割中心
+        if decideblock(block1, foundblock):
+            Tromino_list[cb2.x][cb2.y] = center
+            Tromino_list[cb3.x][cb3.y] = center
+            Tromino_list[cb4.x][cb4.y] = center
+            fullBlock(block1, foundblock)
+            fullBlock(block2, cb2)
+            fullBlock(block3, cb3)
+            fullBlock(block4, cb4)
+        elif decideblock(block2, foundblock):
+            Tromino_list[cb1.x][cb1.y] = center
+            Tromino_list[cb3.x][cb3.y] = center
+            Tromino_list[cb4.x][cb4.y] = center
+            fullBlock(block1, cb1)
+            fullBlock(block2, foundblock)
+            fullBlock(block3, cb3)
+            fullBlock(block4, cb4)
+        elif decideblock(block3, foundblock):
+            Tromino_list[cb1.x][cb1.y] = center
+            Tromino_list[cb2.x][cb2.y] = center
+            Tromino_list[cb4.x][cb4.y] = center
+            fullBlock(block1, cb1)
+            fullBlock(block2, cb2)
+            fullBlock(block3, foundblock)
+            fullBlock(block4, cb4)
+        elif decideblock(block4, foundblock):
+            Tromino_list[cb1.x][cb1.y] = center
+            Tromino_list[cb2.x][cb2.y] = center
+            Tromino_list[cb3.x][cb3.y] = center
+            fullBlock(block1, cb1)
+            fullBlock(block2, cb2)
+            fullBlock(block3, cb3)
+            fullBlock(block4, foundblock)
+    else:
+        # 如果棋盘格式达到最小
+        c1 = cutBlock(b, 1)
+        c2 = cutBlock(b, 2)
+        c3 = cutBlock(b, 3)
+        c4 = cutBlock(b, 4)
+        center += 1
+        if foundblock.x == c1.end.x and foundblock.y == c1.end.y:
+            Tromino_list[b.end.x][b.end.y - 1] = center
+            Tromino_list[b.end.x - 1][b.end.y] = center
+            Tromino_list[b.end.x][b.end.y] = center
+        if foundblock.x == c2.end.x and foundblock.y == c2.end.y:
+            Tromino_list[b.end.x - 1][b.end.y - 1] = center
+            Tromino_list[b.end.x - 1][b.end.y] = center
+            Tromino_list[b.end.x][b.end.y] = center
+        if foundblock.x == c3.end.x and foundblock.y == c3.end.y:
+            Tromino_list[b.end.x - 1][b.end.y - 1] = center
+            Tromino_list[b.end.x][b.end.y - 1] = center
+            Tromino_list[b.end.x][b.end.y] = center
+        if foundblock.x == c4.end.x and foundblock.y == c4.end.y:
+            Tromino_list[b.end.x - 1][b.end.y - 1] = center
+            Tromino_list[b.end.x][b.end.y - 1] = center
+            Tromino_list[b.end.x - 1][b.end.y] = center
+def drawCanvas(s, colors, startx=100, starty=100, cellwidth=100):
+    """
+    绘制方块
+    :param colors: 颜色数组
+    :param startx: 起点x
+    :param starty: 起点y
+    :param cellwidth: 方块宽度
+    :return:
+    """
+    # 得到棋盘组成数组，使用tk canvas来进行绘图
+    width = 2 * startx + len(s) * cellwidth
+    height = 2 * starty + len(s) * cellwidth
+    canvas.config(width=width, height=height)
+    # 定义画布
+    canvas.create_rectangle(100 * fill.x, 100 * fill.y, 100 * (fill.x + 1), 100 * (fill.y + 1), fill='red', outline='black')
+    canvas.create_text(100 * (fill.x + 0.5), 100 * (fill.y + 0.5), text='0', fill='white')
+    canvas.update()
+    time.sleep(0.5)
+    max = int((len(s) * len(s) - 1) / 3)
+    # x = 1
+    for m in range(1, max + 1):
+        for i in range(len(s)):
+            for j in range(len(s)):
+                if s[i][j] == m:
+                    color = colors[m % len(colors)]
+                    canvas.create_rectangle(100 * (i + 1), 100 * (j + 1), 100 * (i + 2), 100 * (j + 2),
+                                            fill=color, outline='white')
+                    canvas.create_text(100 * (i + 1.5), 100 * (j + 1.5), text=m, fill='white')
+        time.sleep(0.5)
+    # 遍历棋盘 根据递归顺序输出棋子
+        canvas.update()
+if __name__ == '__main__':
+    width = 100  # 方块宽度
+    n = 8  # 初始宽度
+    begin = point(0, 0)  # 初始方块坐标
+    end = point(n, n)  #
+    fill = point(7, 3)  # 已填充方块
+    print(fill.x)
+    center = 0
+    Tromino_list = [([center] * (n + 1)) for i in range(n + 1)]
+    print(Tromino_list)
+    # 绘制并且填充棋盘，
+    Tromino_list[fill.x][fill.y] = -1  # 已填充方块置-1
+    block = Tromino(begin, end, n)
+    print('block:')
+    block.output()
+    #print(Tromino_list)
+    fullBlock(block, fill)
+    # print(Tromino_list)
+    # 去除第一行第一列
+    #print(center)
+    Tromino_listok = [([center] * (n)) for i in range(n)]
+    for i in range(1, len(Tromino_list)):
+        for j in range(1, len(Tromino_list)):
+            Tromino_listok[i - 1][j - 1] = Tromino_list[i][j]
+    for i in Tromino_listok:
+        print(i)
+    # 输出Tromino谜题，保存到二维数组Tromino_list
+    root = Tk() # Tk canvas绘图
+    root.title("Tromino谜题")
+    canvas = Canvas(root, bg="black")
+    canvas.pack()
+    colors = ['#b0929f', '#2C3E50', '#f0d264', '#6698cb', '#82c8a0', '#cb99c5']  # 定义色块颜色
+    drawCanvas(Tromino_listok, colors)  # 传入色块坐标绘图
+root.mainloop()

@@ -1,0 +1,119 @@
+public class Tromino {
+
+    static int num = 2;
+    //x 对应 第二维
+    //y 对应 第一维
+    static int[][] panel = {
+        {0,0,0,0,0,0,0,0},
+        {0,0,0,0,0,0,0,0},
+        {0,0,0,0,0,0,1,0},
+        {0,0,0,0,0,0,0,0},
+        {0,0,0,0,0,0,0,0},
+        {0,0,0,0,0,0,0,0},
+        {0,0,0,0,0,0,0,0},
+        {0,0,0,0,0,0,0,0}
+    };
+    /*static int[][] panel ={
+        {0,0},{0,1}
+    };*/
+    /*
+     * 棋盘大小 2^n * 2^n
+     * 缺失方块的位置  (x, y)
+     * 棋盘的开始位置x0, y0
+     */
+    public static void cover(int x0, int y0, int x, int y, int size){
+        int cx = x0 + size / 2 - 1;
+        int cy = y0 + size / 2 - 1;
+        if(size == 2){
+            if(x0 == x && y0 == y){//左上
+                panel[y0][x0+1] = num;
+                panel[y0+1][x0+1] = num;
+                panel[y0+1][x0] = num;
+                num++;
+            }
+            if(x0+1 == x && y == y0){//右上
+                panel[y0][x0] = num;
+                panel[y0+1][x0+1] = num;
+                panel[y0+1][x0] = num;
+                num++;
+            }
+            if(x0 == x && y == y0 + 1){//左下
+                panel[y0][x0] = num;
+                panel[y0+1][x0+1] = num;
+                panel[y0][x0+1] = num;
+                num++;
+            }
+            if(x0+1 == x && y == y0 + 1){//右下
+                panel[y0][x0] = num;
+                panel[y0][x0+1] = num;
+                panel[y0+1][x0] = num;
+                num++;
+            }
+            print();
+            return;
+        }
+        
+        if( x <= cx && y <= cy){
+            //左上
+            panel[cy][cx+1] = num;
+            panel[cy+1][cx] = num;
+            panel[cy+1][cx+1] = num;
+            num++;
+            print();
+            cover(x0, y0, x, y, size/2);//递归左上
+            cover(cx+1, y0, cx+1, cy, size/2);//递归右上
+            cover(x0, cy+1, cx, cy+1, size/2);//递归左下
+            cover(cx+1, cy+1, cx+1, cy+1, size/2);//递归右下
+        }
+        if( x > cx && y > cy){
+            //右下
+            panel[cy][cx] = num;
+            panel[cy+1][cx] = num;
+            panel[cy][cx+1] = num;
+            num++;
+            print();
+            cover(x0, y0, cx, cy, size/2);//递归左上
+            cover(cx+1, y0, cx+1, cy, size/2);//递归右上
+            cover(x0, cy+1, cx, cy+1, size/2);//递归左下
+            cover(cx+1, cy+1, x, y, size/2);//递归右下
+        }
+        if( x > cx && y <= cy){
+            //右上
+            panel[cy][cx] = num;
+            panel[cy+1][cx] = num;
+            panel[cy+1][cx+1] = num;
+            num++;
+            print();
+            cover(x0, y0, cx, cy, size/2);//递归左上
+            cover(cx+1, y0, x, y, size/2);//递归右上
+            cover(x0, cy+1, cx, cy+1, size/2);//递归左下
+            cover(cx+1, cy+1, cx+1, cy+1, size/2);//递归右下
+        }
+        if( x <= cx && y > cy){
+            //左下
+            panel[cy][cx] = num;
+            panel[cy][cx+1] = num;
+            panel[cy+1][cx+1] = num;
+            num++;
+            print();
+            cover(x0, y0, cx, cy, size/2);//递归左上
+            cover(cx+1, y0, cx+1, cy, size/2);//递归右上
+            cover(x0, cy+1, x, y, size/2);//递归左下
+            cover(cx+1, cy+1, cx+1, cy+1, size/2);//递归右下
+        }
+    }
+    public static void print(){
+        for(int i = 0; i < panel.length; i++){
+            for(int j = 0; j < panel[i].length; j++){
+                System.out.printf("%3d", panel[i][j]);
+            }
+            System.out.println();
+        }
+        System.out.println();
+    }
+    public static void main(String[] args) {
+        cover(0, 0, 6, 2, 8);
+        //cover(0, 0, 1, 0, 2);
+        print();
+    }
+}

@@ -1,0 +1,57 @@
+import random
+import numpy as np
+import matplotlib.pyplot as plt
+def tromino(pos_1, pos_2, hole):
+    #递归停止条件
+    if pos_1 == pos_2:
+        return
+    global board
+    #随机颜色
+    t = random.randint(0, 220)
+    plt.clf()
+    plt.imshow(board)
+    plt.pause(0.02)
+    #棋盘中心 偏向左上方
+    center = (((pos_2[0]+pos_1[0])//2), ((pos_2[1]+pos_1[1])//2))
+    #hole在左上方
+    if hole[0]<=center[0] and hole[1]<=center[1]:
+        board[center[0]][center[1]+1] = board[center[0]+1][center[1]] \
+            = board[center[0]+1][center[1]+1] = t
+        tromino(pos_1, center, hole)
+        tromino((pos_1[0],center[1]+1), (center[0],pos_2[1]), (center[0], center[1]+1))
+        tromino((center[0]+1,pos_1[1]), (pos_2[0],center[1]), (center[0]+1, center[1]))
+        tromino((center[0]+1,center[1]+1), pos_2, (center[0]+1, center[1]+1))
+    #hole在右上方
+    elif hole[0]<=center[0] and hole[1]>center[1]:
+        board[center[0]][center[1]] = board[center[0]+1][center[1]] \
+            = board[center[0]+1][center[1]+1] = t
+        tromino(pos_1, center, (center[0], center[1]))
+        tromino((pos_1[0],center[1]+1), (center[0],pos_2[1]), hole)
+        tromino((center[0]+1,pos_1[1]), (pos_2[0],center[1]), (center[0]+1, center[1]))
+        tromino((center[0]+1,center[1]+1), pos_2, (center[0]+1, center[1]+1))
+    #hole在左下方
+    elif hole[0]>center[0] and hole[1]<=center[1]:
+        board[center[0]][center[1]] = board[center[0]][center[1]+1] \
+            = board[center[0]+1][center[1]+1] = t
+        tromino(pos_1, center, (center[0], center[1]))
+        tromino((pos_1[0],center[1]+1), (center[0],pos_2[1]), (center[0], center[1]+1))
+        tromino((center[0]+1,pos_1[1]), (pos_2[0],center[1]), hole)
+        tromino((center[0]+1,center[1]+1), pos_2, (center[0]+1, center[1]+1))
+    #hole在右下方
+    elif hole[0]>center[0] and hole[1]>center[1]:
+        board[center[0]][center[1]] = board[center[0]+1][center[1]] \
+            = board[center[0]][center[1]+1] = t
+        tromino(pos_1, center, (center[0], center[1]))
+        tromino((pos_1[0],center[1]+1), (center[0],pos_2[1]), (center[0], center[1]+1))
+        tromino((center[0]+1,pos_1[1]), (pos_2[0],center[1]), (center[0]+1, center[1]))
+        tromino((center[0]+1,center[1]+1), pos_2, hole)
+if __name__ == '__main__':
+    n = int(input('请输入规模：'))
+    n = 2**n
+    board = np.zeros((n,n))
+    hole = (random.randint(0,n-1), random.randint(0,n-1))
+    board[hole[0]][hole[1]] = 255
+    fig = plt.figure()
+    tromino((0,0), (n-1,n-1), hole)
+    plt.imshow(board)
+    plt.show()
