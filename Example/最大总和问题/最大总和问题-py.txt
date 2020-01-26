@@ -1,0 +1,112 @@
+import networkx as nx   #networkx用于画图
+import matplotlib.pyplot as plt
+class getMax():
+    def __init__(self):
+        self.deep = len(tower)  #数塔深度
+        self.second_deep = len(tower[self.deep-1]) #表示数塔第二层
+    def output(self,getInput):
+        for i in getInput:
+            print(i)
+    def maxTower (self,tower):
+        '''
+        tower:数塔
+        返回：选择后的结果数塔及最优路径
+        '''
+        result_tower = [[None for x in range(self.second_deep)] for y in range(self.deep)]
+        bestpath = [[None for x in range(self.second_deep)] for y in range(self.deep)]
+        #初始化结果数塔,将数塔的最后一层给与结果数塔
+        for i in range(self.second_deep):
+            result_tower[self.deep-1][i] = tower[self.deep-1][i]
+        #计算结果数塔及它的路径
+        for i in range(self.deep-2, -1, -1):
+            for j in range( i + 1):
+                if(result_tower[i+1][j] > result_tower[i+1][j+1]):#如果左边的数比右边的大，把大的赋予结果数塔
+                    result_tower[i][j] = tower[i][j] + result_tower[i + 1][j]
+                    bestpath[i][j] = 'L'
+                else:
+                    result_tower[i][j] = tower[i][j] + result_tower[i+1][j+1]
+                    bestpath[i][j] = 'R'
+        return result_tower, bestpath
+    def draw_path(self,G, note_g, position, values=None):
+        '''
+        :G:使用结果数塔的图
+        :
+        :values:节点位置
+        返回：结果数塔，最优路径
+        '''
+        plt.figure()
+        nx.draw_networkx_nodes(G,pos = position,node_color = values if values
+        else 'w',node_size = 600)
+        nx.draw_networkx_edges(G,pos = position)
+        nx.draw_networkx_labels(G, position,labels=node_g,font_size=10)
+    def getGraph(self,tower):
+        '''
+        将数塔画出来
+        '''
+        G = nx.DiGraph()
+        for i in range(self.deep-1):
+            for j in range(i+1):
+                G.add_edge((i,j), (i+1,j))
+                G.add_edge((i,j), (i+1,j+1))
+        node_g = dict()
+        for p in G.nodes:
+            node_g[p] = tower[p[0]][p[1]]
+        position = dict()
+        position[(0,0)] = (0, 0)   #初始化位置
+        for i in range(self.deep-1):
+            for j in range(i+1):
+                pos = position[(i,j)]
+                position[(i+1,j)] = (pos[0]-0.5, pos[1]-1)
+                position[(i+1,j+1)] = (pos[0]+0.5, pos[1]-1)
+        return node_g,position,G
+    def getColor(self,G):
+        '''
+        :获取颜色
+        '''
+        colors = dict()
+        colors[(0,0)] = 'b'
+        j = 0
+        for i in range(self.deep-1):
+            if bestpath[i][j] == 'L':
+                colors[(i+1,j)] = 'y'
+            elif bestpath[i][j] == 'R':
+                j += 1
+                colors[(i+1,j)] = 'y'
+            else:
+                colors[(i+1,j)] = 'w'
+        values = [colors.get(node, 'w') for node in G.nodes()]
+        return values
+    def getPosition(self):
+        '''
+        :节点定位
+        '''
+        position = dict()
+        position[(0,0)] = (0,0)
+        for i in range(self.deep -1):
+            for j in range(i+1):
+                pos = position[(i,j)]
+                position[(i+1,j)] = (pos[0] -0.5 ,pos[1] -1)
+                position[(i+1,j+1)] = (pos[0] + 0.5 ,pos[1] - 1)
+        return position
+
+if __name__ == '__main__':
+    tower = [
+        [9],
+        [12,15],
+        [10,6,8],
+        [2,18,9,5],
+        [19,7,10,4,16]
+    ]   #创建数塔
+    G = nx.DiGraph()    #创建有向图
+    getMax = getMax()  #实例化getMax
+    node_g,position ,G=getMax.getGraph(tower)   #将数塔转换为图
+    getMax.draw_path(G,node_g,position)    #可视化绘制数塔
+    result_tower,bestpath =getMax.maxTower(tower)  # 自低向上选择选择树塔路径
+    getMax.output(result_tower)   #输出结果数塔
+    values = getMax.getColor(G)    #根据选择的路径生成节点颜色
+    position = getMax.getPosition()  #获取节点所对应的值，统计到节点的和
+    node_g = dict()
+    for x in G.nodes:
+        node_g[x] = result_tower[x[0]][x[1]]    # node_g字典保存节点数据，键为节点位置，值为节点数值
+    getMax.draw_path(G,node_g,position,values)  #画图
+    plt.show()   #展示

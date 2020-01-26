@@ -1,0 +1,223 @@
+from tkinter import *
+from tkinter import ttk  # 导入ttk模块，因为下拉菜单控件在ttk中
+from turtle import Turtle, Screen
+import math  # 用于计算点间距离
+class Tkgui():
+    def __init__(self):
+        self.root = Tk()
+        self.cmb = ttk.Combobox(self.root)
+        self.cmb2 = ttk.Combobox(self.root)
+    # 记录输入地点，展示最短路径绘图
+    def show(self):
+        global site1
+        global site2
+        site1 = self.cmb.get()
+        site2 = self.cmb2.get()
+        # site2 = self.cmb2.get()
+        print("起点：%s" % self.cmb.get())
+        print("终点：%s" % self.cmb2.get())
+        Dijkstra()
+        #  self.root.destroy()
+    # 清除函数，清除输入框的内容
+    def dele(self):
+        self.cmb.delete(0, END)
+        self.cmb2.delete(0, END)
+    # 选择函数，打印选择的地点
+    def getSelect(self,event):
+        #  text.insert('insert', cmb.get() + "\n")
+        print(self.cmb.get())
+    def getGui(self):
+        self.root.title('路径选择窗口')
+        self.cmb.grid(row=0, column=1)
+        # 创建下拉菜单
+        # 设置下拉菜单中的值
+        self.cmb['value'] = ('大门', '明德楼', '蝴蝶山', '士继门', '中门', '实验楼', '一二三四教', '五六教', '快乐食间', '图书馆', '后门')
+        # 设置默认值，即默认下拉框中的内容
+        self.cmb.current(0)
+        # 默认值中的内容为索引，从0开始
+        self.cmb2.grid(row=1, column=1)
+        # 设置下拉菜单2中的值
+        self.cmb2['value'] = ('大门', '明德楼', '蝴蝶山', '士继门', '中门', '实验楼', '一二三四教', '五六教', '快乐食间', '图书馆', '后门')
+        # 设置默认值，即默认下拉框中的内容
+        self.cmb2.current(0)
+        # 设置两个按钮，点击按钮执行命令 command= 命令函数
+        Label(self.root, text="请输入起点：").grid(row=0, column=0)
+        Label(self.root, text="请输入终点：").grid(row=1, column=0)
+        theButton1 = ttk.Button(self.root, text="计算最短路径", command=self.show)
+        theButton2 = ttk.Button(self.root, text="清除输入信息", command=self.dele)
+        # grid设置按钮的位置行列及大小
+        theButton1.grid(row=3, column=0, sticky=W, padx=10, pady=5)
+        theButton2.grid(row=3, column=1, sticky=E, padx=10, pady=5)
+        # 绑定事件
+        self.cmb.bind("<<ComboboxSelected>>", self.getSelect)
+        # text = Text(root)
+        # text.grid(row=3,column=0,)
+        self.root.mainloop()
+# 判断变量存在
+def isset(v):
+   try :
+     type (eval(v))
+   except :
+     return 0
+   else :
+     return 1
+# 画出图中各地点
+def drawPoint(x, y):
+    turtle.color('red')
+    # turtle.shape('circle')
+    turtle.penup()
+    turtle.goto(x, y)
+    turtle.pendown()
+    turtle.pensize(4)
+    turtle.circle(5)
+# 画出每个相邻可达节点路径
+def drawEach(site1, site2):
+    x1 = site[site1][0]
+    y1 = site[site1][1]
+    x2 = site[site2][0]
+    y2 = site[site2][1]
+    turtle.penup()
+    turtle.goto(x1, y1)
+    turtle.pendown()
+    turtle.pensize(4)
+    turtle.color('black')
+    lenth = int(math.sqrt((x1 - x2) ** 2 + (y1 - y2) ** 2))  # 求任意两点之间距离
+    turtle.goto(x2, y2)
+    turtle.color('black')
+    turtle.pensize(1)
+    turtle.penup()
+    turtle.goto((x1 + x2) / 2, (y1 + y2) / 2)
+    turtle.pendown()
+    if (site1 not in nodesInfo):
+        nodesInfo[site1] = {site2: lenth}
+    else:
+        nodesInfo[site1].update({site2: lenth})
+    if (site2 not in nodesInfo):
+        nodesInfo[site2] = {site1: lenth}
+    else:
+        nodesInfo[site2].update({site1: lenth})
+# 画出两点路径
+def drawSortPath(site1, site2):
+    x1 = site[site1][0]
+    y1 = site[site1][1]
+    x2 = site[site2][0]
+    y2 = site[site2][1]
+    turtle.penup()
+    turtle.goto(x1, y1)
+    turtle.pendown()
+    turtle.pensize(4)
+    turtle.color('red')
+    turtle.goto(x2, y2)
+    oldsite1 = site1
+    oldsite2 = site2
+# 覆盖上一次路径选择的颜色填充
+def drawSortPath2(site1, site2):
+    x1 = site[site1][0]
+    y1 = site[site1][1]
+    x2 = site[site2][0]
+    y2 = site[site2][1]
+    turtle.penup()
+    turtle.goto(x1, y1)
+    turtle.pendown()
+    turtle.pensize(4)
+    turtle.color('black')
+    turtle.goto(x2, y2)
+# 遍历DAG有向图，依次绘制节点
+def drawGraph():
+    for key, value in site.items():
+        drawPoint(value[0], value[1])
+    for i in node_Graph:
+        for j in node_Graph[i]:
+            drawEach(i, j)
+# Dijkstra算法求两点最短路径
+def Dijkstra():
+    start = site1  # 起点
+    end = site2    # 终点
+    # 未访问过节点的数组
+    unvisited = {node: None for node in nodes}
+    # print(nodesInfo)
+    # print(unvisited)
+    # 记录已经访问过节点的数组
+    visited = {node: [] for node in nodes}
+    # print(visited)
+    # 目前到起点节点的距离
+    startitem = 0
+    unvisited[start] = startitem
+    for i in range(len(nodes)):
+        # 访问过就不再加入
+        for neigh, distance in nodesInfo[start].items():
+            if neigh not in unvisited:
+                continue
+            # 计算距离和
+            newdis = startitem + distance
+            # 如果两个点之间的距离之前是无穷大或者新距离小于原来的距离
+            if unvisited[neigh] is None or unvisited[neigh] > newdis:
+                # 更新距离
+                unvisited[neigh] = newdis
+                # 更新路径
+                visited[neigh] = [x for x in visited[start]]
+                visited[neigh].append(start)
+        # 当添加后在未访问节点信息中删除
+        del unvisited[start]
+        # 如果所有点都访问过，退出
+        if not unvisited:
+            break
+        candidates = [node for node in unvisited.items() if node[1]]
+        # 按照节点中距离最短的进行排序
+        start, startitem = sorted(candidates, key=lambda x: x[1])[0]
+    # 终点加入visited中
+    for key, value in visited.items():
+        value.append(end)
+    # 得到最短路径列表
+    path_list = visited[end]
+    global oldsite1
+    global oldsite2
+    global oldpath_list
+    # 记录上次操作得到的路径
+    if isset('oldpath_list') != 0:
+        for i in range(len(oldpath_list) - 1):
+            drawSortPath2(oldpath_list[i], oldpath_list[i + 1])
+    # 如果上次图中有红色线条，则将红色线条清空
+    for i in range(len(path_list) - 1):
+        drawSortPath(path_list[i], path_list[i + 1])
+    # 用红色线条绘制最短路径图
+    oldpath_list = path_list
+if __name__ == '__main__':
+    node_Graph = {
+        '大门': ['明德楼', '中门', '士继门'],
+        '明德楼': ['实验楼'],
+        '蝴蝶山': ['士继门', '中门'],
+        '士继门': ['实验楼'],
+        '中门': ['五六教', '快乐食间'],
+        '实验楼': ['一二三四教', '图书馆'],
+        '一二三四教': ['图书馆', '后门', '快乐食间'],
+        '五六教': ['快乐食间'],
+        '快乐食间': ['图书馆', '后门'],
+        '图书馆': [],
+        '后门': []
+    }
+    site = {
+        '大门': (-268, -77),
+        '明德楼': (-220, -103),
+        '蝴蝶山': (-131, -18),
+        '士继门': (-157, -80),
+        '中门': (-284, 122),
+        '实验楼': (-38, -143),
+        '一二三四教': (20, -48),
+        '五六教': (-207, 142),
+        '快乐食间': (-100, 117),
+        '图书馆': (-68, 15),
+        '后门': (197, 88),
+    }
+    turtle = Turtle()
+    sc = Screen()
+    #turtle.speed(5)
+    nodesInfo = {}
+    nodes = []
+    sc.bgpic('./map.gif')
+    sc.title('重庆理工大学地图导航')
+    for i in node_Graph:
+        nodes.append(i)
+    drawGraph()
+    Tkgui = Tkgui()
+    Tkgui.getGui()

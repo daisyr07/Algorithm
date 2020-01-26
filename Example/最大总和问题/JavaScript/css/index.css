@@ -1,0 +1,49 @@
+body{
+	background-color:#ffebcd;
+}
+
+#content{
+	width: 100%;
+	height: 100%;
+	text-align: center;
+	margin-top: 100px;
+	
+}
+
+#tab{
+	align-content: center;
+	border-collapse: collapse;
+	border-spacing: 0;
+	margin: 2rem auto;
+	width: 50rem;
+	border-radius: 8px;
+}
+#create_tab,#randnum,#Calculation{
+	margin-left: auto;
+	margin-right: auto;
+	width: 6rem;
+	background-color: #B0E0E6;
+	height: 2rem;
+	border: none;
+	border-radius: 8px;
+}
+
+#create_tab:hover,#randnum:hover,#Calculation:hover{
+	margin-left: auto;
+	margin-right: auto;
+	width: 6rem;
+	background-color: #800080;
+	height: 2rem;
+	border: none;
+	border-radius: 8px;
+	box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2), 0 6px 20px 0 rgba(0,0,0,0.19);
+	color: white;
+}
+
+#th{
+	border-radius: 8px;
+	margin: 0px;
+	text-align: center;
+	width: 100%;
+	height: 100%;
+}

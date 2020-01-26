@@ -1,0 +1,99 @@
+package algorithm;
+
+import java.awt.Checkbox;
+import java.awt.Graphics;
+import java.awt.Polygon;
+import java.awt.Robot;
+/**
+ * 说明：
+ * robot类用于为测试自动化、自运行演示程序和其他需要控制鼠标和键盘的应用程序生成本机系统输入事件。
+ * 主要屏幕截图，延时，取屏幕颜色，模拟键盘，模拟鼠标
+*/
+public class map1 {
+	private MapColor mc;
+	@SuppressWarnings("unused")
+	private Polygon[] p;//定义多边形
+	private Checkbox cbx;
+	private int count = 0;//初始化着色个数为0
+	int[][] metrix;
+	public map1(MapColor mc,Polygon[] p,Checkbox cbx,int[][] metrix){
+		this.mc = mc;
+		this.p = p;
+		this.cbx = cbx;
+		this.metrix =metrix; 
+	}
+	//判断函数
+	public boolean isOK(int province[])
+	{
+		for(int j=0;j<count;j++)
+			//判断相邻并且颜色相同，通过metrix数组，定义了34个省，如果相邻则为1
+			if(metrix[count][j]==1&&province[j]==province[count])
+				return false;
+		return true;
+	}
+	
+	/**着色函数
+	 * 限制颜色为四种，用四种颜色给34个省着色，当所有省都被着色则结束
+	 * 选择各种颜色，为这个省着色，直到这个省的颜色满足 不是 相邻且颜色相同 这个条件
+	 * */
+	public int color(int province[])
+	{
+		int i = 0;//表示颜色
+		boolean isAllProvincesColorful = count>=33;
+		if(isAllProvincesColorful) {//如果着色的个数小于33，因为设置了34个省级行政区
+			return 1;
+		}
+        //从第一个颜色开始着色，给与了四种颜色
+		for(i=0;i<4;i++)
+		{
+			province[count]=i;
+			Graphics g = mc.getGraphics();
+			mc.fillColor(g, count, i);
+			//如果演示被选择，则使用Robot的延时功能，进行演示
+			boolean isIllustrate = cbx.getState();
+			if(isIllustrate) {
+				try{
+					Robot r = new Robot();
+				    r.delay(150);
+				}
+				catch(Exception e){}
+			}
+          /**
+           * isok（）判断当前着色是否合理（即不是相邻且同色的），
+           * 如果不合理，执行最开始的步骤，重新赋予颜色，
+           * 如果合理执行下一个颜色的着色
+           * */
+			if(isOK(province)){
+				count++;
+				int j = color(province); //递归调用着色函数进行着色	
+				/**
+				 * 当现在这个省的颜色与相邻的省颜色相同
+				 * 回到上一个颜色
+				 * 重置上一个省的颜色
+				 * */
+				if(j==-1){
+					count--;
+					province[count]=-1;
+				}
+				if(count>33) return 1;//如果所有省份都被着色，返回1
+			}			
+		}
+		
+		if(i>=4) return -1;//如果着色颜色超过了4，就错误，返回-1
+		return 1;
+	}
+	
+	//定义省份一维数组，对省份进行着色
+	public void backtrack(){
+		int province[]=new int[34];
+        color(province);
+	}
+	//重置按钮
+	public void resetMap(){
+		Graphics g = mc.getGraphics();
+		for(int k=0;k<34;k++){
+			mc.fillColor(g, k, 4);
+		}
+		mc.paint(g);		
+	}
+}

@@ -1,0 +1,178 @@
+# -*- coding: utf-8 -*-
+import turtle
+import time
+
+#intvs = {1: 3, 2: 7, 5: 6, 6: 8, 10: 19, 10.5: 12.5}
+intvs = {1: 3, 2: 7, 5: 6, 4: 11, 10: 12, 10.5: 12.5}
+intvslist = sorted(intvs.items())
+intvsvalues = sorted(intvs.items(), key=lambda kv: (kv[1], kv[0]))  # 按照值升序排列
+keylist = []
+keylist2 = []
+getTask = []
+for k in intvsvalues:
+    keylist.append(k[0])
+for k2 in intvsvalues:
+    keylist2.append(k2[1])
+intvskeys = sorted(intvs.items(), key=lambda x: x[0])  # 按照键升序排列
+endlist = sorted(intvs)
+# 贪心算法解决区间调度问题
+def getX(x):
+    endTask = []
+    if x == 'exit':
+        return
+    print('x='+str(x))
+    #  如果一个区间不想与 x 的 end 相交，它的 start 必须要大于（或等于）x 的 end，把所有与 x 区间相交的区间从区间集合 intvs 中删除
+    for i in endlist:
+        if i < x:
+            pass
+            #print(ok2.remove(ok2[ok2.index()]))
+        else:
+            endTask.append(i)
+    print(endTask)
+    if len(endTask) < 1:
+        return
+    x = endTask[0]
+    print('选择工作区间：'+ str(x) + ':' + str(intvs[x]))
+    # 记录选择
+    getTask.append([x,intvs[x]])
+    print(getTask)
+    # 选择不相交的第一个点
+    for j in intvskeys:
+        if intvs[x] <= j[0]:
+            print('intvx=' + str(intvs[x]))
+            found = j[0]
+            print('found=' + str(found))
+            print('######')
+            break
+        else:
+            found = 'exit'
+    #  递归调用，重复寻找
+    return getX(found)
+# 画出每个区间
+def drawLine(x,y,long):
+    turtle.home()
+    turtle.speed(10)
+    turtle.delay(0)
+    pythonsize = 10  # 30px
+    turtle.pensize(pythonsize)  # 轨迹宽度
+    turtle.pencolor("blue")  # 轨迹颜色
+    turtle.penup()
+    turtle.goto(x, y)
+    turtle.pendown()
+    turtle.forward(long)
+    turtle.penup()
+# 红色画笔画出选择区间
+def drawLinered(x,y,long):
+    turtle.home()
+    turtle.speed(10)
+    turtle.delay(1)
+    pythonsize = 10  # 30px
+    turtle.pensize(pythonsize)  # 轨迹宽度
+    turtle.pencolor("red")  # 轨迹颜色
+    turtle.penup()
+    turtle.goto(x, y)
+    turtle.pendown()
+    turtle.forward(long)
+    turtle.penup()
+#  画出所有区间
+def drawAllLine():
+    if intvskeys[0][0] > intvsvalues[0][0]:
+        min = intvsvalues[0][0]
+    else:
+        min = intvskeys[0][0]
+    if intvskeys[-1][1] > intvsvalues[-1][1]:
+        max = intvsvalues[-1][1]
+    else:
+        max = intvskeys[-1][1]
+    nheigh = max - min
+    eachNheigh = int(1000/nheigh)
+    eachNwidth = int(-1000/len(intvs))
+    print('#####')
+    print(eachNheigh, eachNwidth)
+    print(intvs)
+    count = 1
+    for i in intvsvalues:
+        print(i[0]*eachNheigh, count*eachNwidth, (i[1]-i[0])*eachNheigh)
+        drawLine(i[0]*eachNheigh, count*eachNwidth,(i[1]-i[0])*eachNheigh)
+        #print(i, intvs[i])
+        count = count+1
+# 画出按照末端大小进行排序后的所有区间
+def drawAllLine2():
+    if intvskeys[0][0] > intvsvalues[0][0]:
+        min = intvsvalues[0][0]
+    else:
+        min = intvskeys[0][0]
+    if intvskeys[-1][1] > intvsvalues[-1][1]:
+        max = intvsvalues[-1][1]
+    else:
+        max = intvskeys[-1][1]
+    nheigh = max - min
+    eachNheigh = int(1000/nheigh)
+    eachNwidth = int(-1000/len(intvs))
+    print('#####')
+    print(eachNheigh, eachNwidth)
+    print(intvs)
+    count = 1
+    for i in intvs:
+        print(i*eachNheigh, count*eachNwidth, (intvs[i]-i)*eachNheigh)
+        drawLine(i*eachNheigh, count*eachNwidth,(intvs[i]-i)*eachNheigh)
+        print(i, intvs[i])
+        count = count+1
+#  虚线画出每次选择区间
+def drawChoose(x):
+    turtle.home()
+    print(x)
+    y = 0
+    long  = heigh
+    turtle.setpos(0, 0)
+    turtle.speed(10)
+    turtle.delay(0)
+    pythonsize = 3  # 30px
+    turtle.pensize(pythonsize)  # 轨迹宽度
+    turtle.pencolor("red")  # 轨迹颜色
+    turtle.penup()
+    turtle.goto(x, y)
+    turtle.right(90)
+    for i in range(1,50):
+        turtle.penup()
+        turtle.forward(long/100)
+        turtle.pendown()
+        turtle.forward(long/100)
+        turtle.penup()
+    print(turtle.pos())
+if __name__ == '__main__':
+    getX(endlist[0])  # 贪婪算法计算最优选择区间
+    width = 1000
+    heigh = 1000
+    turtle.setup(width+100, heigh+100, 0, 0)
+    turtle.setworldcoordinates(0, -(width+100),heigh+100,0)
+    # 设置画布
+    drawAllLine2()  # 画出未排列之前的区间
+    time.sleep(3)
+    turtle.clear()  # 清除画布
+    drawAllLine()  # 画出排列之后的区间
+    # turtle.done()
+    if intvskeys[0][0] > intvsvalues[0][0]:
+        min = intvsvalues[0][0]
+    else:
+        min = intvskeys[0][0]
+    if intvskeys[-1][1] > intvsvalues[-1][1]:
+        max = intvsvalues[-1][1]
+    else:
+        max = intvskeys[-1][1]
+    nheigh = max - min
+    eachNheigh = int(1000/nheigh)
+    eachNwidth = int(-1000/len(intvs))
+    # 根据当前画布计算绘画的单位长度
+    for i in getTask:
+        for j in intvsvalues:
+            if j[0] == i[0]:
+                print(j)
+                print(i)
+                print(keylist2)
+                count = keylist2.index(j[1]) + 1
+                break
+    # 遍历，红色画笔画出选择的区间
+        drawLinered(i[0]*eachNheigh, count*eachNwidth, (i[1]-i[0])*eachNheigh)
+        drawChoose(i[1]*eachNheigh)
+    turtle.done()

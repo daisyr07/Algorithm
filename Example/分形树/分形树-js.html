@@ -1,0 +1,65 @@
+<div align="center">
+		<canvas id="fractalTree" height="505" width="800" style="background-color: #fff"></canvas>
+</div>
+<script type="text/javascript">
+	var canvas = document.getElementById('fractalTree');
+	var ctx = canvas.getContext('2d');
+	var pi=Math.PI;
+	var angle=pi/3;//角度：60度
+	var cos=Math.cos(angle);
+	var sin=Math.sin(angle);
+	var cosleft=Math.cos(2*pi-angle);
+	var sinleft=Math.sin(2*pi-angle);
+
+	//构建数学平面直角坐标系
+	ctx.translate(400,500);//重置原点坐标
+	ctx.rotate(Math.PI)//旋转坐标系
+	ctx.scale(-1, 1);//水平翻转
+
+	drawLine(-400, 0, 400, 0);//x轴
+	//drawLine(0,0,0,450);//Y轴
+	//从y轴向量上一个旋转位置开始
+	fractalTree(-450*sin,450*cos,0,0);
+	//drawLine(-450*sin,450*cos,0,0)
+	//（x1,y1）将要旋转的向量
+	//(x2,y2)连线的起点
+	function fractalTree(x1,y1,x2,y2){
+		//将向量（x1,y1）旋转a
+		var newX = x1*cos+y1*sin;
+		var newY = -x1*sin+y1*cos;
+
+		if (getDistance(newX+x2,newY+y2,x2,y2)<10) {
+			return;
+		}
+		drawLine(newX+x2,newY+y2,x2,y2);
+
+		//下一条右侧连线的起点
+		var tx=((newX+x2)+x2*2)/3;
+		var ty=((newY+y2)+y2*2)/3;
+
+		//下一条线是将现在的这个向量的2/3进行旋转
+		fractalTree(newX*2/3,newY*2/3,tx,ty);
+
+		//左侧连线将向量的1/2进行旋转2pi-a
+		var newLeftX = (x1*cosleft+y1*sinleft)/2;
+		var newLeftY = (-x1*sinleft+y1*cosleft)/2;
+
+		tx=(2*(newX+x2)+x2)/3;
+		ty=(2*(newY+y2)+y2)/3;
+		fractalTree(newLeftX*2/3,newLeftY*2/3,tx,ty);
+	}
+	//获取两点之间的距离
+	function getDistance(x1,y1,x2,y2){
+		var xdiff=x2-x1;
+		var ydiff=y2-y1;
+		console.log(Math.pow((xdiff * xdiff + ydiff * ydiff), 0.5));
+		return Math.pow((xdiff * xdiff + ydiff * ydiff), 0.5);
+	}
+	//画线
+	function drawLine(x1,y1,x2,y2){
+		ctx.moveTo(x1,y1);//移动到坐标（x1，y1）
+		ctx.lineTo(x2,y2);//当前坐标(x2,y2)
+		//移动到的坐标位置连接当前坐标位置，就是一条直线
+		ctx.stroke();
+	};
+</script>
